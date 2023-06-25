@@ -10,9 +10,9 @@ function ShoppingCart(){
     const [items,setItems]=useState([]);
     const [itemName,setItemName]=useState('');
     const [itemPrice,setItemPrice]=useState(0);
+    const [editId,setEditId]=useState(null);
 
-
-  const addItem=(id)=>{
+  const addItem=()=>{
     if(itemName===''||itemPrice===0)
     {
       alert('Both Item and Price should be filled!');
@@ -20,7 +20,7 @@ function ShoppingCart(){
     else
     {
     let item1={
-      id: id,
+      id: id++,
       name: itemName,
       price: itemPrice
     }
@@ -32,24 +32,55 @@ function ShoppingCart(){
   }
   }
 
-  // const handleDelete=(id)=>{
-  //   console.log(id);
-  //   let item1=items.map(item=>item.id!==id);
-  //   setItems(item1);
-  // }
+  const editItem=()=>{
+    if(itemName===''||itemPrice===0)
+    {
+      alert('Both Item and Price should be filled!');
+    }
+    else
+    {
+      let updatedItems=items.map(item=>
+        item.id===editId?{...item,name:itemName,price:itemPrice}:item
+      );
+      
+      console.log(updatedItems);
+      setItems(updatedItems);
+      setshowForm(false);
+      setEditId(null);
+      setItemName('');
+      setItemPrice(0);
+
+  }
+
+  }
+
+  const handleDelete=(id)=>{
+    let updatedItems=items.filter(item=>
+      item.id!==id);
+    setItems(updatedItems);
+  }
+
+  const handleEdit=(id)=>{
+    let itemtobeEdited=items.find(item=>item.id===id);
+    setEditId(id);
+    setItemName(itemtobeEdited.name);
+    setItemPrice(itemtobeEdited.price);
+    setshowForm(true);
+  }
   
     return (
         <div className='shop'>
             {
               items.length===0?
-              (<h2>Card Empty! Add items</h2>)
+              (<h2>Cart Empty! Add items</h2>)
               :(<h2>Your cart:</h2>) 
             }
             <ul>
             {
                 items.map(item=>(
                      <li key={item.id}>{item.id}  {item.name}  ${item.price}
-                     {/* <button onClick={()=>handleDelete(item.id)}>Delete</button> */}
+                     <button onClick={()=>handleEdit(item.id)}>Edit</button>
+                     <button onClick={()=>handleDelete(item.id)}>Delete</button>
                      </li>
                 ))
             }
@@ -57,10 +88,14 @@ function ShoppingCart(){
             {showForm?
               (
               <div className='shop'>
-              <h1>Add item</h1>
+              <h1>{editId===null?'Add Item':'Edit Item'}</h1>
               Item: <input type="text"  value={itemName} onChange={(e)=>setItemName(e.target.value)} required />
               Price: <input type="number" value={itemPrice} onChange={(e)=>setItemPrice(e.target.value)} />
-              <button onClick={()=>addItem(id++)}>Save</button>
+              {
+              editId===null?
+              <button onClick={addItem}>Save</button>
+              :<button onClick={editItem}>Save Changes</button>
+              }
               </div>
 
               )
