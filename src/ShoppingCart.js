@@ -3,44 +3,71 @@ import './ShoppingCart.css';
 import { useState } from 'react';
 
 
-let id=0,name=1000,price=500;
+let id=0;
 
 function ShoppingCart(){
     const [showForm, setshowForm]=useState(false);
-    const [item,setItem]=useState([]);
-    // const [itemName,setItemName]=useState('');
+    const [items,setItems]=useState([]);
+    const [itemName,setItemName]=useState('');
+    const [itemPrice,setItemPrice]=useState(0);
 
 
-    const handleClick=()=>{
-      console.log(showForm);
-      let sf=showForm;
-      if(sf)
-      {
-        setshowForm(false);
-      }
-      else{
-        setshowForm(true);
-      }
-      let item1={
-        id1:id++,
-        name1: name++,
-        price1:price++
-      }
-      setItem([...item,item1])
-      
+  const addItem=(id)=>{
+    if(itemName===''||itemPrice===0)
+    {
+      alert('Both Item and Price should be filled!');
     }
+    else
+    {
+    let item1={
+      id: id,
+      name: itemName,
+      price: itemPrice
+    }
+
+    setItems([...items,item1]);
+    setshowForm(false);
+    setItemName('');
+    setItemPrice(0);
+  }
+  }
+
+  // const handleDelete=(id)=>{
+  //   console.log(id);
+  //   let item1=items.map(item=>item.id!==id);
+  //   setItems(item1);
+  // }
   
     return (
         <div className='shop'>
-            <button onClick={handleClick}>show form</button>
+            {
+              items.length===0?
+              (<h2>Card Empty! Add items</h2>)
+              :(<h2>Your cart:</h2>) 
+            }
             <ul>
             {
-                item.map(it=>(
-                     <li key={it.id1}>{it.name1}</li>
+                items.map(item=>(
+                     <li key={item.id}>{item.id}  {item.name}  ${item.price}
+                     {/* <button onClick={()=>handleDelete(item.id)}>Delete</button> */}
+                     </li>
                 ))
             }
             </ul>
-            {showForm?<h1>this is form</h1>:<h1>and this is not</h1>
+            {showForm?
+              (
+              <div className='shop'>
+              <h1>Add item</h1>
+              Item: <input type="text"  value={itemName} onChange={(e)=>setItemName(e.target.value)} required />
+              Price: <input type="number" value={itemPrice} onChange={(e)=>setItemPrice(e.target.value)} />
+              <button onClick={()=>addItem(id++)}>Save</button>
+              </div>
+
+              )
+            :
+            (
+              <button onClick={()=>setshowForm(true)}>Add Items</button>
+            )
     
             }
         </div>
